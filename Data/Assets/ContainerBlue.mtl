@@ -1,0 +1,58 @@
+# 3ds Max Wavefront OBJ Exporter v0.97b - (c)2007 guruware
+# File Created: 26.10.2017 12:30:52
+
+newmtl Container2
+	Ns 10.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.0000 0.0000 0.0000
+	Kd 1.0000 1.0000 1.0000
+	Ks 0.6000 0.6000 0.6000
+	Ke 0.0000 0.0000 0.0000
+	map_Ka maps\cointainer_color2.jpg
+	map_Kd maps\cointainer_color2.jpg
+
+newmtl rods
+	Ns 40.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.0000 0.0000 0.0000
+	Kd 0.9412 0.9412 0.9412
+	Ks 0.3000 0.3000 0.3000
+	Ke 0.0000 0.0000 0.0000
+	map_Ka maps\metal1.jpg
+	map_Kd maps\metal1.jpg
+
+newmtl 01___Default
+	Ns 40.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.0000 0.0000 0.0000
+	Kd 1.0000 1.0000 1.0000
+	Ks 0.5700 0.5700 0.5700
+	Ke 0.0000 0.0000 0.0000
+	map_Ka maps\locket.jpg
+	map_Kd maps\locket.jpg
+
+newmtl 09___Default
+	Ns 40.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.0000 0.0000 0.0000
+	Kd 0.7569 0.7569 0.7569
+	Ks 0.3000 0.3000 0.3000
+	Ke 0.0000 0.0000 0.0000
+	map_Ka maps\metal1.jpg
+	map_Kd maps\metal1.jpg

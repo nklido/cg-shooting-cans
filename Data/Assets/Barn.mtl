@@ -1,0 +1,50 @@
+# 3ds Max Wavefront OBJ Exporter v0.97b - (c)2007 guruware
+# File Created: 18.10.2017 17:34:10
+
+newmtl Corrugated01
+	Ns 25.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	illum 2
+	Ka 1.0000 1.0000 1.0000
+	Kd 1.0000 1.0000 1.0000
+	Ks 0.0000 0.0000 0.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ka maps\CorrugatedMetalSheets.tif
+	map_Kd maps\CorrugatedMetalSheets.tif
+	map_Ks maps\CorrugatedMetalSheets_s.tif
+	map_d maps\CorrugatedMetalSheets.tif
+	map_bump maps\CorrugatedMetalSheets_b.jpg
+	bump maps\CorrugatedMetalSheets_b.jpg
+
+newmtl Metal01
+	Ns 25.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000 
+	illum 2
+	Ka 1.0000 1.0000 1.0000
+	Kd 1.0000 1.0000 1.0000
+	Ks 0.2688 0.2688 0.2688
+	Ke 0.0000 0.0000 0.0000
+	map_Ka maps\metal_plain01.jpg
+	map_Kd maps\metal_plain01.jpg
+	map_bump maps\metal_plain01.jpg
+	bump maps\metal_plain01.jpg
+
+newmtl concrete_floor
+	Ns 10.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	illum 2
+	Ka 1.0000 1.0000 1.0000
+	Kd 1.0000 1.0000 1.0000
+	Ks 0.0000 0.0000 0.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ka maps\concrete_openfoundation.jpg
+	map_Kd maps\concrete_openfoundation.jpg
+	#map_Ks maps\concrete_openfoundation_s.tif
+	map_bump maps\concrete_openfoundation_b.jpg
+	bump maps\concrete_openfoundation_b.jpg
