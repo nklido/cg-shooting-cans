@@ -201,7 +201,7 @@ void Renderer::Update(float dt)
 	//checking for Can collisions
 	for (std::vector<Can*>::const_iterator iter = cans.begin(); iter != cans.end(); ++iter) {
 
-		SceneNode * coll = checkCollision(rootNode, 1.f, (*iter)->getPosition(), (*iter)->getDirection(), (*iter)->getName().c_str());
+		coll = checkCollision(rootNode, 1.f, (*iter)->getPosition(), (*iter)->getDirection(), (*iter)->getName().c_str());
 		
 		//std::cout << (*iter)->getPosition().x <<", "<< (*iter)->getPosition().z <<
 			//"  Direction ("<<(*iter)->getDirection().x <<","<< (*iter)->getDirection().y <<","<<(*iter)->getDirection().z <<")"<<std::endl;
