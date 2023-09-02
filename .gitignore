@@ -2,10 +2,14 @@
 .idea
 *.sdf
 *.suo
-
+out
+build
 */Debug
 */Release
 cmake-build-debug
+
+ShootingCans/*/Debug
+ShootingCans/*/Release
 
 # Prerequisites
 *.d
