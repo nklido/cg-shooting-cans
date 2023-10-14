@@ -126,20 +126,6 @@ int main(int argc, char *argv[]) {
 	//Quit flag
 
 
-	
-	//capt = TTF_OpenFont("../data/Fonts/Capture_it.ttf", 24);
-	//surface = TTF_RenderText_Solid(capt,"HELLO", White);
-	//essage =SDL_CreateTextureFromSurface(sdl_renderer, surface);
-
-	/*
-	SDL_Rect Message_rect; //create a rect
-	Message_rect.x = SCREEN_WIDTH / 2;  //controls the rect's x coordinate 
-	Message_rect.y = SCREEN_HEIGHT / 2; // controls the rect's y coordinte
-	Message_rect.w = 100; // controls the width of the rect
-	Message_rect.h = 100; // controls the height of the rect
-	*/
-
-
 	Mix_OpenAudio(22050, MIX_DEFAULT_FORMAT, 2, 4096);
 	fireEffect = Mix_LoadWAV("../data/sounds/fire_effect_de.wav");
 	walking = Mix_LoadWAV("../data/sounds/walking_on_gravel.wav");

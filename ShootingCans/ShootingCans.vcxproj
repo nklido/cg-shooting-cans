@@ -169,7 +169,6 @@
     <ClCompile Include="ShaderProgram.cpp" />
     <ClCompile Include="SpotLightNode.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="test.cpp" />
     <ClCompile Include="TextureManager.cpp" />
     <ClCompile Include="Tools.cpp" />
   </ItemGroup>

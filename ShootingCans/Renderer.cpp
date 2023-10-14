@@ -289,38 +289,6 @@ void Renderer::Update(float dt)
 	}
 	
 
-	/*
-	for (std::vector<Bullet*>::const_iterator iter = bullets.begin(); iter != bullets.end();) {
-		if (!(*iter)->isActive()) {
-			delete *iter;
-			iter = bullets.erase(iter);
-		}
-		else {
-			(*iter)->update(dt);
-			SceneNode * coll = checkCollision(rootNode,(*iter)->getRadius(), (*iter)->getPosition(), (*iter)->getDirection(), true);
-			if (coll != nullptr) {
-
-				printf("SHOT : %s\n", coll->getLabel().c_str());
-				if (strstr(coll->getLabel().c_str(), "CAN")) {
-					//coll->removeChild(coll);
-					auto it = std::find(cans.begin(), cans.end(), coll->getParent());
-					if (it != cans.end()) {
-						cans.erase(it);
-						printf("Num of cans now : %d\n", cans.size());
-						rootNode->removeChild(coll->getParent());
-						delete coll->getParent();
-						
-					}
-					//delete coll;
-					//printf("%s\n", typeid(coll->getParent()).name());
-				}
-				(*iter)->setActive(false);
-				
-			}
-			++iter;
-		}
-	}
-	*/
 	//jump
 	if(is_jumping){
 		float pos = m_camera_position.y;
@@ -663,22 +631,6 @@ bool Renderer::InitGeometricMeshes()
 	Perimeter::CreatePerimeter();
 	rootNode = new SceneNode();
 
-	/*
-	for (unsigned int i = 0; i < 20; i++) {
-		rootNode->addChild(new Can("__"+std::to_string(i),glm::vec2(10 * cos(i*18),10* sin(i* 18))));
-	}
-	*/
-	/*
-	Can * can1 = new Can("_BEN",glm::vec2(12, 20));
-	Can * can2 = new Can("_JOHN",glm::vec2(12, 10));
-
-
-	cans.push_back(can1);
-	cans.push_back(can2);
-
-	rootNode->addChild(can1);
-	rootNode->addChild(can2);
-	*/
 #ifndef debuggin
 	rootNode->addChild(new Enviroment());
 #endif // !debuggin
