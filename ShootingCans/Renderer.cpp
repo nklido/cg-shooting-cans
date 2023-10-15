@@ -7,7 +7,6 @@
 #include "glm/gtc/type_ptr.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 #include "OBJLoader.h"
-
 //#define debuggin 
 
 
@@ -52,6 +51,8 @@ m_spot_light_shadow_map_program("SpotLight ShadowMap Program"){
 						glm::vec2(28,-28),
 						glm::vec2(-28,0),
 						glm::vec2(18,0)};
+
+
 }
 
 Renderer::~Renderer()
@@ -129,106 +130,82 @@ bool Renderer::Init(int SCREEN_WIDTH, int SCREEN_HEIGHT)
 
 void Renderer::Update(float dt)
 {
-	Can::target = glm::vec3(m_camera_position.x,0,m_camera_position.z);
-	movement_speed = 5.0f;
-	sensitivity = 0.01f;
-	glm::vec3 move_dir = glm::normalize(m_camera_position - m_camera_old_position);
 
-	//check for player collision
-	SceneNode * coll = nullptr;
-	coll = checkCollision(rootNode, 1.2f, m_camera_position, move_dir, true);
-	
-	if (coll != nullptr){
-		//printf("Collided with : %s\n",coll->getLabel().c_str());
-		m_camera_position = m_camera_old_position;
+
+	Can::target = glm::vec3(m_camera_position.x, 0, m_camera_position.z);
+
+	float movement_speed = 5.0f;
+
+	glm::vec3 direction = glm::normalize(m_camera_target_position - m_camera_position);
+
+	//dont allow movement on y axis when moving forward-backward
+	glm::vec3 movement_direction = direction * glm::vec3(1, 0, 1);
+
+	glm::vec3 walk_direction = glm::normalize(m_camera_position - m_camera_old_position);
+	SceneNode*  coll = checkCollision(rootNode, 0.8f, m_camera_position, walk_direction, true);
+	if (coll != nullptr) {
+
+		std::string label = coll->getLabel().c_str();
+		//printf("Collided with : %s\n", label);
+
+		if (label.substr(0, 3) == "CAN") {
+			printf("GAME OVER");
+			game_over = true;
+			return;
+		}
+
+
+		m_camera_position = m_camera_old_position - glm::normalize(walk_direction) * 0.1f;
 		return;
 	}
 	m_camera_old_position = m_camera_position;
 
-	//direction :: where camera looks at (front)
-	glm::vec3 direction = glm::normalize(m_camera_target_position - m_camera_position);
-	
-	//dont allow movement on y axis when moving forward-backward
-	glm::vec3 movement_direction = direction * glm::vec3(1, 0, 1);
-
-	//update camera's x movement
-	m_camera_position += m_camera_movement.x *  movement_speed * movement_direction * dt;
-	m_camera_target_position += m_camera_movement.x * sensitivity * direction * dt;
+	m_camera_position += m_camera_movement.x * movement_speed * movement_direction * dt;
+	m_camera_target_position += m_camera_movement.x * movement_speed * direction * dt;
 
 	glm::vec3 right = glm::normalize(glm::cross(direction, m_camera_up_vector));
+	m_camera_position += m_camera_movement.y * movement_speed * right * dt;
+	m_camera_target_position += m_camera_movement.y * movement_speed * right * dt;
 
-	//dont allow movement on y axis when moving left-right
-	glm::vec3 movement_right = right * glm::vec3(1, 0, 1);
 
-	m_camera_position += m_camera_movement.y *  movement_speed * movement_right * dt;
-	m_camera_target_position += m_camera_movement.y * sensitivity * right * dt;
 	glm::mat4 rotation = glm::mat4(1.0f);
 	float angular_speed = glm::pi<float>() * 0.0025f;
 
 	rotation *= glm::rotate(glm::mat4(1.0), m_camera_look_angle_destination.y * angular_speed, right);
-	rotation *= glm::rotate(glm::mat4(1.0), -m_camera_look_angle_destination.x  * angular_speed, m_camera_up_vector);
-
-	m_continous_time += dt;
-	
+	rotation *= glm::rotate(glm::mat4(1.0), -m_camera_look_angle_destination.x * angular_speed, m_camera_up_vector);
 	m_camera_look_angle_destination = glm::vec2(0);
 
 	direction = rotation * glm::vec4(direction, 0);
 	float dist = glm::distance(m_camera_position, m_camera_target_position);
 	m_camera_target_position = m_camera_position + direction * dist;
 
-
-
 	m_view_matrix = glm::lookAt(m_camera_position, m_camera_target_position, m_camera_up_vector);
-	
-	glm::vec4 light_position = glm::inverse(m_view_matrix)
-		*glm::vec4(-0.25,0.3,0.75,1);
 
-	glm::vec4 light_target = glm::inverse(m_view_matrix)
-		*glm::vec4(0.065,0.5,-10, 1);
-	
-	
-	
-	m_spotlight_node.SetPosition(glm::vec3(light_position.x, light_position.y, light_position.z));
-	m_spotlight_node.SetTarget(glm::vec3(light_target.x, light_target.y, light_target.z));
+	m_continous_time += dt;
 
 
-	//m_spotlight_node.SetPosition(m_camera_position);
-	//m_spotlight_node.SetTarget(m_camera_target_position);
+	m_spotlight_node.SetTarget(glm::vec3(m_camera_target_position.x, m_camera_target_position.y, m_camera_target_position.z));
+	m_spotlight_node.SetPosition(m_camera_position - 0.3f * direction);
 
-	//std::cout << glm::to_string(m_camera_position) << std::endl;
-	//std::cout << glm::to_string(glm::vec3(test.x, test.y, test.z)) << std::endl;
 
 	//checking for Can collisions
 	for (std::vector<Can*>::const_iterator iter = cans.begin(); iter != cans.end(); ++iter) {
+		SceneNode* coll = checkCollision(rootNode, 1.f, (*iter)->getPosition(), (*iter)->getDirection(), (*iter)->getName().c_str());
 
-		coll = checkCollision(rootNode, 1.f, (*iter)->getPosition(), (*iter)->getDirection(), (*iter)->getName().c_str());
-		
-		//std::cout << (*iter)->getPosition().x <<", "<< (*iter)->getPosition().z <<
-			//"  Direction ("<<(*iter)->getDirection().x <<","<< (*iter)->getDirection().y <<","<<(*iter)->getDirection().z <<")"<<std::endl;
-
-		//std::cout << m_camera_position.x << ", " << m_camera_position.z << std::endl;
-		if (round((*iter)->getPosition().x) == round(m_camera_position.x) 
-			&& round((*iter)->getPosition().z) == round(m_camera_position.z )) {
-			printf("GAME OVER");
-			game_over = true;
+		if (coll == nullptr) {
+			(*iter)->walk(dt);
 		}
-
-		if (!coll) {
-			(*iter)->walk();
-		}
-		else{
-			//printf("Collided with : %s\n", coll->getLabel().c_str());
-			(*iter)->step_back();
+		else {
+			printf("Can: %s Collided with : %s\n", (*iter)->getLabel().c_str(), coll->getLabel().c_str());
+			(*iter)->step_back(dt);
 			(*iter)->setDirection(-(*iter)->getDirection());
-			
 			unsigned int seed = static_cast<unsigned int>(m_continous_time);
 			srand(seed);
 			int angle = rand();
-			(*iter)->turn(glm::pi<float>()*angle/180);
-			(*iter)->walk();
+			(*iter)->turn(glm::pi<float>() * angle / 180);
+			(*iter)->walk(dt);
 		}
 	}
-	//printf("after can collision check... \n");
 
 	//Fire gun
 	if (shots_fired) {
@@ -255,40 +232,7 @@ void Renderer::Update(float dt)
 		m_gun_transformation_normal_matrix = glm::transpose(glm::inverse(m_gun_transformation_matrix));
 	}
 
-	for (std::vector<Bullet*>::const_iterator iter = bullets.begin(); iter != bullets.end();) {
-		if (!(*iter)->isActive()) {
-			delete *iter;
-			iter = bullets.erase(iter);
-		}
-		else {
-			for (int i = 0; i < 30; i++) {
-				(*iter)->update(dt);
-				SceneNode * coll = checkCollision(rootNode, (*iter)->getRadius(), (*iter)->getPosition(), (*iter)->getDirection(), true);
-				if (coll != nullptr) {
-
-					printf("SHOT : %s\n", coll->getLabel().c_str());
-					if (strstr(coll->getLabel().c_str(), "CAN")) {
-						//coll->removeChild(coll);
-						auto it = std::find(cans.begin(), cans.end(), coll->getParent());
-						if (it != cans.end()) {
-							cans.erase(it);
-							printf("Num of cans now : %d\n", cans.size());
-							rootNode->removeChild(coll->getParent());
-							delete coll->getParent();
-							kills++;
-						}
-						//delete coll;
-						//printf("%s\n", typeid(coll->getParent()).name());
-					}
-					(*iter)->setActive(false);
-					break;
-				}
-			}
-			++iter;
-		}
-	}
 	
-
 	//jump
 	if(is_jumping){
 		float pos = m_camera_position.y;
@@ -310,30 +254,48 @@ void Renderer::Update(float dt)
 	}
 
 	rootNode->update(dt);
-	 
+	
+	for (std::vector<Bullet*>::const_iterator iter = bullets.begin(); iter != bullets.end();) {
+
+		if (!(*iter)->isActive()) {
+			delete* iter;
+			iter = bullets.erase(iter);
+		}
+		else {
+
+			for (int i = 0; i < 30; i++) {
+
+				(*iter)->update(dt);
+
+				SceneNode* coll = checkCollision(rootNode, (*iter)->getRadius(), (*iter)->getPosition(), (*iter)->getDirection(), true);
+
+				if (coll != nullptr) {
+
+					printf("SHOT : %s\n", coll->getLabel().c_str());
+					if (strstr(coll->getLabel().c_str(), "CAN")) {
+
+						auto it = std::find(cans.begin(), cans.end(), coll->getParent());
+						if (it != cans.end()) {
+							cans.erase(it);
+							printf("Num of cans now : %d\n", cans.size());
+							rootNode->removeChild(coll->getParent());
+							delete coll->getParent();
+							kills++;
+						}
+						//delete coll;
+						//printf("%s\n", typeid(coll->getParent()).name());
+					}
+					(*iter)->setActive(false);
+					break;
+				}
+			}
+			++iter;
+		}
+	}
 
 	//printf("%d\n",(int) round(m_continous_time));
-	
 	if (m_continous_time > next_respawn_time) {
 		if (cans.size() < max_cans) {
-			
-			/* try1 too predictable
-			unsigned int seed = static_cast<unsigned int>(m_continous_time);
-			srand(seed);
-			int i =  rand()% static_cast<int>(spawn_positions.size());
-			std::cout << "Respwning at : " << i << std::endl;
-			Can * can = new Can(std::to_string(m_continous_time),spawn_positions.at(i));
-			*/
-
-			/*try2 always the same
-			std::random_shuffle(spawn_positions.begin(), spawn_positions.end());
-			Can * can = new Can(std::to_string(m_continous_time), spawn_positions.at(0));
-			std::cout << "Respwning at : " << glm::to_string(spawn_positions.at(0)) << std::endl;
-
-			rootNode->addChild(can);
-			cans.push_back(can);
-			*/
-
 			auto rng = std::default_random_engine{};
 			std::shuffle(std::begin(spawn_positions), std::end(spawn_positions), rng);
 			Can * can = new Can(std::to_string(m_continous_time), spawn_positions.at(0));
@@ -605,11 +567,8 @@ bool Renderer::ResizeBuffers(int width, int height)
 
 bool Renderer::InitLightSources()
 {
-	m_spotlight_node.SetPosition(glm::vec3(0,10,2)); //y = 1
-	m_spotlight_node.SetTarget(glm::vec3(0, 0, 0));
-
-	m_spotlight_node.SetColor(40.0f * glm::vec3(0.92, 0.89, 1.0)); // (0.79, 0.89, 1.0)
-	m_spotlight_node.SetConeSize(15,60); //(50, 70);
+	m_spotlight_node.SetColor(25.0f * glm::vec3(0.79, 0.89, 1.0)); // (0.79, 0.89, 1.0)
+	m_spotlight_node.SetConeSize(50,70); //(50, 70);
 	m_spotlight_node.CastShadow(true);
 	return true;
 }
@@ -795,10 +754,13 @@ void Renderer::RenderGeometry()
 	
 	glBindVertexArray(0);
 	glBindVertexArray(m_vao);
+	//draw crosshair
 	glm::mat4 cube_transformation =glm::inverse(m_view_matrix)
 		*glm::translate(glm::mat4(1.0f), glm::vec3(0,0, -3))
 		*glm::scale(glm::mat4(1.0f),glm::vec3(0.02,0.02,0.02));
 	glUniformMatrix4fv(m_geometry_rendering_program["uniform_model_matrix"], 1, GL_FALSE, glm::value_ptr(cube_transformation));
+
+
 	glDrawArrays(GL_TRIANGLES, 0, m_num_vertices);
 	
 	m_geometry_rendering_program.Unbind();
@@ -860,9 +822,12 @@ bool Renderer::checkCollision(SceneNode * node, float radius, const glm::vec3 & 
 		if (collided(radius, node->getWorldTransform(), node->getCollisionHull(), pos, dir)) {
 			return true;
 		}
-		else
+		else {
 			return false;
+		}
+
 	}
+	return false;
 }
 
 
@@ -883,16 +848,14 @@ SceneNode* Renderer::checkCollision(SceneNode * node, float radius, const glm::v
 			return nullptr;
 		}
 	}
+	return nullptr;
 }
 
 SceneNode* Renderer::checkCollision(SceneNode * node, float radius, const glm::vec3 & pos, const glm::vec3 & dir, const char* except) {
 	for (std::vector<SceneNode*>::const_iterator iter = node->getChildIteratorStart(); iter != node->getChildrenIteratorEnd(); ++iter) {
 		SceneNode* p = nullptr;
 		p = checkCollision(*iter, radius, pos, dir, true);
-		//printf("excpet : %s\n", except);
 		if (p) {
-			
-			//printf(p->getLabel().c_str());
 			if (strcmp(except, p->getLabel().c_str()) != 0) {
 				return p;
 			}
@@ -909,7 +872,7 @@ SceneNode* Renderer::checkCollision(SceneNode * node, float radius, const glm::v
 		else
 			return nullptr;
 	}
-	
+	return nullptr;
 }
 
 

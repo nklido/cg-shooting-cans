@@ -25,7 +25,7 @@ Can::Can(std::string name,glm::vec2 pos) {
 
 
 	direction = glm::normalize(glm::vec3(1, 0, 0));//glm::normalize(glm::vec3(1, 0, 1)*cos(v1*glm::pi<float>() / 180));
-	movement_speed = 0.25f;//0.25;
+	movement_speed = 3.f;//0.25;
 	
 
 	body = new SceneNode(geo_body,col_mesh);
@@ -67,30 +67,22 @@ Can::Can(std::string name,glm::vec2 pos) {
 	rightLower->addChild(rightFoot);
 }
 
-void Can::walk() {
+void Can::walk(float dt) {
 	
 	old_position = position;
-	position += direction*movement_speed;
+	position += direction * movement_speed * dt;
 	glm::vec3 old_dir = direction;
 	direction = glm::normalize(Can::target - position);
 }
 
-void Can::step_back() {
+void Can::step_back(float dt) {
 	position = old_position;
-	position -= direction*0.2 ;
+	position -= direction* movement_speed * dt;
 }
 
 void Can::turn(float angle) {
 	direction = -glm::normalize(glm::cross(direction, glm::vec3(0, 1, 0)));
 	rotation_angle = glm::pi<float>()/2;// -rotation_angle;// + angle
-
-	//direction.x -= 0.5;
-	//direction.z -= 0.5;
-
-	//direction.x = 
-	//direction.x =(1/cos(angle));
-	//direction.z = 1- (1 / cos(angle));
-	//std::cout << "direction = " << glm::to_string(direction) << std::endl;
 }
 
 
