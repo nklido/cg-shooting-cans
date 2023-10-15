@@ -215,6 +215,7 @@ void Renderer::Update(float dt)
 
 		if (!coll) {
 			(*iter)->walk();
+			(*iter)->walk(dt);
 		}
 		else{
 			//printf("Collided with : %s\n", coll->getLabel().c_str());
@@ -226,6 +227,7 @@ void Renderer::Update(float dt)
 			int angle = rand();
 			(*iter)->turn(glm::pi<float>()*angle/180);
 			(*iter)->walk();
+			(*iter)->walk(dt);
 		}
 	}
 	//printf("after can collision check... \n");

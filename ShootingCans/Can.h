@@ -46,8 +46,8 @@ public:
 	static glm::vec3 target; //player position
 
 	virtual void update(float dt);
-	virtual void walk();
-	virtual void step_back();
+	virtual void walk(float dt);
+	virtual void step_back(float dt);
 	virtual void turn(float rad);
 
 	virtual glm::vec3 getPosition() {return position;}
