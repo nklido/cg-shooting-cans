@@ -196,7 +196,7 @@ void Renderer::Update(float dt)
 			(*iter)->walk(dt);
 		}
 		else {
-			printf("Can: %s Collided with : %s\n", (*iter)->getLabel().c_str(), coll->getLabel().c_str());
+			//printf("Can: %s Collided with : %s\n", (*iter)->getLabel().c_str(), coll->getLabel().c_str());
 			(*iter)->step_back(dt);
 			(*iter)->setDirection(-(*iter)->getDirection());
 			unsigned int seed = static_cast<unsigned int>(m_continous_time);
